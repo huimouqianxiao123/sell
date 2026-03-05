@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.sell.dao.ShoppingCartMapper">
+
+    <select id="listShoppingCartVo" resultType="com.example.sell.domain.vo.ShoppingCartVo">
+        SELECT
+            sc.id,
+            sc.product_id AS productId,
+            p.name AS productName,
+            p.image AS productImage,
+            p.description AS productDescription,
+            sc.quantity,
+            p.price,
+            (p.price * sc.quantity) AS totalPrice,
+            sc.selected
+        FROM
+            shopping_cart sc
+                LEFT JOIN
+            product p ON sc.product_id = p.id
+        WHERE
+            sc.user_id = #{userId}
+        ORDER BY
+            sc.created_at DESC
+    </select>
+</mapper>

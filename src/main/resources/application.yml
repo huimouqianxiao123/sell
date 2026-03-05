@@ -1,0 +1,116 @@
+server:
+  port: 8081
+  tomcat:
+    # 最大工作线程数（高并发建议200-400）
+    max-threads: 300
+    # 最小空闲线程数
+    min-spare-threads: 50
+    # 最大连接数
+    max-connections: 10000
+    # 等待队列长度
+    accept-count: 500
+
+spring:
+  ai:
+    dashscope:
+      api-key: sk-a2a5661e418d4c42931e3371953f19a4
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  data:
+    redis:
+      host: 43.139.17.130
+      port: 6739
+      password: ZEmYsnpwF4HE3fhe
+      database: 0
+      redisson:
+        config: |
+          singleServerConfig:
+            address: "redis://43.139.17.130:6739"
+            password: "ZEmYsnpwF4HE3fhe"
+            database: 0
+            connectionMinimumIdleSize: 10
+            connectionPoolSize: 64
+            timeout: 3000
+            retryAttempts: 3
+            retryInterval: 1500
+          # 看门狗续期时间，默认30秒
+          lockWatchdogTimeout: 30000
+      lettuce:
+        pool:
+          # 最大连接数（高并发建议 150-200）
+          max-active: 200
+          # 最大空闲连接（建议 max-active 的一半）
+          max-idle: 100
+          # 最小空闲连接（保持一定数量避免冷启动）
+          min-idle: 30
+          # 连接池最大阻塞等待时间（毫秒），负值表示无限制
+          max-wait: 2000
+        # 关闭超时时间（毫秒）
+        shutdown-timeout: 100ms
+
+  application:
+    name: sellsystem
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/miaosha?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456 # 请修改为您的数据库密码
+    hikari:
+      # 连接池名称
+      pool-name: MiaoshaHikariPool
+      # 最小空闲连接数（建议等于最大连接数，避免频繁创建）
+      minimum-idle: 30
+      # 最大连接数（高并发场景建议 30-50）
+      maximum-pool-size: 50
+      # 连接空闲超时时间（毫秒），默认 600000（10分钟）
+      idle-timeout: 300000
+      # 连接最大生命周期（毫秒），建议小于 MySQL 的 wait_timeout
+      max-lifetime: 1200000
+      # 连接超时时间（毫秒），减少等待时间
+      connection-timeout: 10000
+      # 测试连接是否可用的 SQL
+      connection-test-query: SELECT 1
+      # 自动提交
+      auto-commit: true
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+login:
+  token:
+    expire: 86400  # 1天
+
+
+
+alipay:
+  appId: 9021000144699468
+  merchantPrivateKey: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCfEV5WL7FjvB2TO04xIgb1lWoT41ndyHQrmbVTAY144BNbgqXovrQy9HOSb+fkx5vfnKccfPV4MVywNZXLjTZ3dth9+nzI0GwU7VJwn45Lha9ImBZ4tMJnFvON0JUifCtTBOe3rdUZ+Bz7b6EECwww2XBWoYs/4PvvWcJwra3Iqi6h7nvKBl04aghJyy8jhJ4IHgRDLJP5uRvzsWqMSukDLtNWxZizpGlKMEa3AGcfyBOCqH0DwEHbr7TqbJlsME8/rMFohQKDpi6WA5gTyzMDBW1qYtDwlxujYoMhJAY3prFgWrpG93J/gYiR8yjGpyTZUPXS/1ki1SYxGFASw6m7AgMBAAECggEBAJRl6sGzSuYF+P2DpYYW/bEdjNIzF4LeYOrQQqbG2wo62jRUZZ4GVCz5e9zRA+GfC1+JUSo1tfhE7PkDdNVqz7aSLJUTHFlogHzhjzi80k7I0GeEY+qGkJsGgX/7aTa76ttPxzHIPfg1TiyQzwHroJruMGzR1wxoRAHflpPypB+Aim18a9MsNAwKV1W4C1rfP0uf4V9fq6sXoeH75Syxwu+5KSArOwnA/byZeIj+K70nBhnHyi5AbXvgRxhIQFgqGR4o9sONUA83MnwcWmFN7SjCgIyW8icWvkP/xB8G7vGm60pBUdJEEYUjUiIyNXRrIJs/qDtzjNuF7ETf7jAfBDECgYEA/2YI0CAr8az50yL7X4V22KOoJhDzZLc3ulO1iv7Dy5BXmPi4MacaL6CR+j+etXgfM/PuIwyYvwic6jjRujF4AoVqgc1x8m6RHeV1vm/1h7LIzEO49WzSsrnu8uUKJWNhN5F1lkV7ZqCnKX2zD656GNM7runCrKIyKmZx2tWSCvkCgYEAn3FC+1C4JN/vdn17YhbBXpA5ADxcKswh2qP1VAecE7DVbIw3mlYNPoAU/yJG6i275NnMQnNqNA+OZciftrnzIoZ5HJITgQvrgpJe0blFYbo6o6zpHLpO3qG4B4l8XJ7v+gTWoMb4mWd+X1/Myc9mBi5nOlyv8AoH/QxumS4us1MCgYAyB6TWUFcLYp0VtRaU4aokSfrYah2jrxhlkZxQfBOSvtXKC37ZiyhgCA5QfUHzvnIuVSxjBUautVs3rqW22ZXuuH/iqYIWwX3/40Eravcn++fFy8ZhnU2w4SdjwWY5aLxUjFQCed3wfqwAPrVi7wTP9CEO5I/UDXnSQHsxKQEQ0QKBgGEFwwS7MdL+kfFAmnwt7K1mhckm8c75OQCbFQZ1Ovygdr7+9DbudlC6EAzRBuYpvlScVDd7k/zqGnTFiKrgrJstyTUhjszQPBfQifKFEztM37IJ3jClDqlbL2kmuI6ECPPTTee4LD7tQ3E2EqAbnLHWOurAzC79a68IiaSc/b4RAoGBAKEwnEW+wrNVXr4Z8klxfCE/x39/bYhQa1jBLM8Gtnr7Huf1XAPcQdiK+HcCnOvDpNUZU7rJ8xB6LoYg10ssTnNdpusNhv08QtVRotji6TJqhnRP/dpBv+K9umMGp9IUAUkUT0D6HeGd2U10S3XMw1wmr2nhPbnSatScSEJBAiAw
+  alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnxFeVi+xY7wdkztOMSIG9ZVqE+NZ3ch0K5m1UwGNeOATW4Kl6L60MvRzkm/n5Meb35ynHHz1eDFcsDWVy402d3bYffp8yNBsFO1ScJ+OS4WvSJgWeLTCZxbzjdCVInwrUwTnt63VGfgc+2+hBAsMMNlwVqGLP+D771nCcK2tyKouoe57ygZdOGoIScsvI4SeCB4EQyyT+bkb87FqjErpAy7TVsWYs6RpSjBGtwBnH8gTgqh9A8BB26+06myZbDBPP6zBaIUCg6YulgOYE8szAwVtamLQ8Jcbo2KDISQGN6axYFq6Rvdyf4GIkfMoxqck2VD10v9ZItUmMRhQEsOpuwIDAQAB
+  notifyUrl: http://p98ea879.natappfree.cc/alipay/notify
+  returnUrl: http://p98ea679.natappfree.cc/alipay/return
+  signType: RSA2
+  charset: utf-8
+  gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+
+
+
+rocketmq:
+  name-server: 43.139.17.130:9876
+  producer:
+    group: seckill-producer-group
+    # 发送消息超时时间（毫秒）
+    send-message-timeout: 3000
+    # 发送失败重试次数
+    retry-times-when-send-failed: 2
+    # 异步发送失败重试次数
+    retry-times-when-send-async-failed: 2

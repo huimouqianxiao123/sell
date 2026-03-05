@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.sell.dao.SeckillProductMapper">
+    
+    <!-- 查询秒杀商品列表（包含商品详情） -->
+    <select id="getSeckillProduct" resultType="com.example.sell.domain.vo.SeckillProductDetailVo">
+        <![CDATA[
+        SELECT
+        sp.id,
+        sp.product_id AS productId,
+        sp.seckill_price AS seckillPrice,
+        sp.seckill_stock AS seckillStock,
+        sp.status,
+        DATE_FORMAT(sp.start_time, '%Y-%m-%d %H:%i:%s') AS startTime,
+        DATE_FORMAT(sp.end_time, '%Y-%m-%d %H:%i:%s') AS endTime,
+        p.name,
+        p.description,
+        p.image AS imageUrl
+        FROM seckill_product sp
+        LEFT JOIN product p ON sp.product_id = p.id
+        WHERE sp.status IN (0, 1)
+        AND sp.start_time <= DATE_ADD(NOW(), INTERVAL 1 DAY)
+        AND sp.end_time > NOW()
+        ORDER BY sp.start_time ASC
+        ]]>
+    </select>
+    
+</mapper>

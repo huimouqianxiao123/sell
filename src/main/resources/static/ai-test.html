@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 智能客服</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #4f6ef7;
+            --primary-light: #e8edff;
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --text: #1a1a2e;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --user-bubble: #4f6ef7;
+            --ai-bubble: #ffffff;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 820px; max-width: 100%; height: 96vh;
+            background: var(--card); border-radius: 16px;
+            box-shadow: var(--shadow);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        /* ========== 顶栏 ========== */
+        .chat-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--card);
+        }
+        .chat-header-left { display: flex; align-items: center; gap: 12px; }
+        .avatar {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, #4f6ef7, #a78bfa);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 18px; font-weight: 700; flex-shrink: 0;
+        }
+        .chat-title { font-size: 16px; font-weight: 600; }
+        .chat-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #22c55e; display: inline-block; margin-right: 4px;
+        }
+        .header-actions { display: flex; gap: 8px; }
+        .header-btn {
+            padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px;
+            background: var(--card); color: var(--text-secondary); font-size: 13px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .header-btn:hover { background: var(--bg); color: var(--text); }
+
+        /* ========== 消息区 ========== */
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 20px 24px;
+            display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth;
+        }
+        .chat-messages::-webkit-scrollbar { width: 6px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+        /* 欢迎 */
+        .welcome-card { text-align: center; padding: 40px 20px; color: var(--text-secondary); }
+        .welcome-icon { font-size: 48px; margin-bottom: 12px; }
+        .welcome-card h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+        .welcome-card p { font-size: 14px; line-height: 1.6; }
+        .quick-questions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 20px; }
+        .quick-q {
+            padding: 8px 16px; border: 1px solid var(--border); border-radius: 20px;
+            font-size: 13px; color: var(--primary); cursor: pointer;
+            transition: all 0.2s; background: var(--card);
+        }
+        .quick-q:hover { background: var(--primary-light); border-color: var(--primary); }
+
+        /* 消息行 */
+        .msg-row { display: flex; gap: 10px; max-width: 85%; animation: fadeIn 0.3s ease; }
+        .msg-row.user { align-self: flex-end; flex-direction: row-reverse; }
+        .msg-row.ai { align-self: flex-start; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg-avatar {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 600; flex-shrink: 0; margin-top: 2px;
+        }
+        .msg-avatar.ai-av { background: linear-gradient(135deg, #4f6ef7, #a78bfa); color: #fff; }
+        .msg-avatar.user-av { background: linear-gradient(135deg, #f97316, #f59e0b); color: #fff; }
+
+        .msg-content { display: flex; flex-direction: column; gap: 4px; }
+        .msg-bubble {
+            padding: 12px 16px; border-radius: 16px; font-size: 14px;
+            line-height: 1.7; word-break: break-word; white-space: pre-wrap;
+            box-shadow: var(--shadow-sm);
+        }
+        .msg-row.user .msg-bubble {
+            background: var(--user-bubble); color: #fff; border-bottom-right-radius: 4px;
+        }
+        .msg-row.ai .msg-bubble {
+            background: var(--ai-bubble); color: var(--text);
+            border: 1px solid var(--border); border-bottom-left-radius: 4px;
+        }
+        .msg-time { font-size: 11px; color: var(--text-secondary); padding: 0 4px; }
+        .msg-row.user .msg-time { text-align: right; }
+
+        /* 系统事件卡片 */
+        .event-card {
+            align-self: center; max-width: 90%; padding: 10px 16px; border-radius: 10px;
+            font-size: 13px; display: flex; align-items: center; gap: 8px;
+            animation: fadeIn 0.3s ease;
+        }
+        .event-card.thought { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
+        .event-card.tool { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .event-card.hitl { background: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
+        .event-card.error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .event-card.system { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+        .event-icon { font-size: 16px; flex-shrink: 0; }
+
+        /* HITL 确认卡片 */
+        .hitl-confirm-card {
+            align-self: center; max-width: 90%; padding: 16px 20px; border-radius: 12px;
+            background: #fff; border: 2px solid #c084fc; box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        .hitl-confirm-title {
+            font-size: 14px; font-weight: 600; color: #7c3aed; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .hitl-tool-detail {
+            background: #f5f3ff; border-radius: 8px; padding: 10px 14px;
+            font-size: 13px; color: #4c1d95; margin-bottom: 12px;
+            font-family: monospace; line-height: 1.6; word-break: break-all;
+        }
+        .hitl-tool-label { font-weight: 600; color: #6d28d9; }
+        .hitl-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        .hitl-btn {
+            padding: 8px 20px; border-radius: 8px; border: none;
+            font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+        }
+        .hitl-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .hitl-btn-confirm {
+            background: #7c3aed; color: #fff;
+        }
+        .hitl-btn-confirm:hover:not(:disabled) { background: #6d28d9; }
+        .hitl-btn-cancel {
+            background: #f3f4f6; color: #6b7280; border: 1px solid var(--border);
+        }
+        .hitl-btn-cancel:hover:not(:disabled) { background: #e5e7eb; }
+
+        /* 思考动画 */
+        .thinking-dots {
+            display: inline-flex; gap: 4px; padding: 12px 16px; border-radius: 16px;
+            background: var(--ai-bubble); border: 1px solid var(--border);
+            border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm);
+        }
+        .thinking-dots span {
+            width: 8px; height: 8px; border-radius: 50%; background: #9ca3af;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .thinking-dots span:nth-child(1) { animation-delay: 0s; }
+        .thinking-dots span:nth-child(2) { animation-delay: 0.16s; }
+        .thinking-dots span:nth-child(3) { animation-delay: 0.32s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* ========== 输入区 ========== */
+        .chat-input-area { padding: 16px 24px; border-top: 1px solid var(--border); background: var(--card); }
+        .input-wrapper {
+            display: flex; align-items: flex-end; gap: 10px;
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 14px; padding: 8px 12px; transition: border-color 0.2s;
+        }
+        .input-wrapper:focus-within {
+            border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+        }
+        .input-wrapper textarea {
+            flex: 1; border: none; outline: none; background: transparent;
+            font-size: 14px; font-family: inherit; resize: none; max-height: 120px;
+            line-height: 1.5; color: var(--text); padding: 4px 0;
+        }
+        .input-wrapper textarea::placeholder { color: #9ca3af; }
+        .send-btn {
+            width: 40px; height: 40px; border-radius: 10px; border: none;
+            background: var(--primary); color: #fff; font-size: 18px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: background 0.2s, transform 0.1s;
+        }
+        .send-btn:hover { background: #3b5de7; }
+        .send-btn:active { transform: scale(0.95); }
+        .send-btn:disabled { background: #c7d2fe; cursor: not-allowed; }
+
+        .session-bar {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 12px; color: var(--text-secondary); margin-top: 6px; padding-left: 4px;
+        }
+        .session-bar input {
+            border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;
+            font-size: 12px; font-family: monospace; color: var(--text-secondary);
+            background: var(--card); width: 280px; outline: none;
+        }
+        .session-bar input:focus { border-color: var(--primary); }
+        .input-hint { font-size: 12px; color: var(--text-secondary); }
+
+        @media (max-width: 860px) {
+            body { align-items: stretch; }
+            .chat-container { width: 100%; height: 100vh; border-radius: 0; }
+            .chat-messages { padding: 16px; }
+            .chat-input-area { padding: 12px 16px; }
+            .msg-row { max-width: 92%; }
+        }
+    </style>
+</head>
+<body>
+<div class="chat-container">
+    <div class="chat-header">
+        <div class="chat-header-left">
+            <div class="avatar">AI</div>
+            <div>
+                <div class="chat-title">智能商品客服</div>
+                <div class="chat-subtitle"><span class="status-dot"></span>在线</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="header-btn" id="historyBtn" title="查看对话历史">历史</button>
+            <button class="header-btn" id="clearBtn" title="清空对话">清空</button>
+            <button class="header-btn" id="newBtn" title="开启新会话">新对话</button>
+        </div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="welcome-card" id="welcomeCard">
+            <div class="welcome-icon">&#x1F6D2;</div>
+            <h3>欢迎使用智能商品客服</h3>
+            <p>我可以帮您查询商品信息，支持按名称、价格、在售状态等条件搜索</p>
+            <div class="quick-questions">
+                <span class="quick-q" data-q="有什么在售的商品？">在售商品</span>
+                <span class="quick-q" data-q="帮我找100元以下的商品">百元好物</span>
+                <span class="quick-q" data-q="有没有手机相关的商品？">搜索手机</span>
+                <span class="quick-q" data-q="推荐一些2000到5000元的商品">2k-5k推荐</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-input-area">
+        <div class="input-wrapper">
+            <textarea id="messageInput" rows="1" placeholder="输入您想查询的商品信息，按 Enter 发送..." autofocus></textarea>
+            <button class="send-btn" id="sendBtn" title="发送">&#x27A4;</button>
+        </div>
+        <div class="session-bar">
+            <span>会话：</span>
+            <input id="sessionId" placeholder="自动生成" readonly />
+            <span class="input-hint" style="margin-left: auto;">Enter 发送 / Shift+Enter 换行</span>
+        </div>
+    </div>
+</div>
+
+<script>
+const BASE_URL = 'http://localhost:8081';
+
+const chatMessages   = document.getElementById('chatMessages');
+const welcomeCard    = document.getElementById('welcomeCard');
+const messageInput   = document.getElementById('messageInput');
+const sessionIdInput = document.getElementById('sessionId');
+const sendBtn        = document.getElementById('sendBtn');
+const historyBtn     = document.getElementById('historyBtn');
+const clearBtn       = document.getElementById('clearBtn');
+const newBtn         = document.getElementById('newBtn');
+
+let currentAiBubble = null;
+let isBusy = false;
+
+// ==================== 工具函数 ====================
+
+function timeStr() {
+    return new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function scrollToBottom() {
+    requestAnimationFrame(() => { chatMessages.scrollTop = chatMessages.scrollHeight; });
+}
+
+function hideWelcome() {
+    if (welcomeCard) welcomeCard.style.display = 'none';
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function setBusy(busy) {
+    isBusy = busy;
+    sendBtn.disabled = busy;
+}
+
+// ==================== 渲染消息 ====================
+
+function addUserMessage(text) {
+    hideWelcome();
+    const row = document.createElement('div');
+    row.className = 'msg-row user';
+    row.innerHTML = `
+        <div class="msg-avatar user-av">我</div>
+        <div class="msg-content">
+            <div class="msg-bubble">${escapeHtml(text)}</div>
+            <div class="msg-time">${timeStr()}</div>
+        </div>`;
+    chatMessages.appendChild(row);
+    scrollToBottom();
+}
+
+function addAiMessage(text) {
+    hideWelcome();
+    const row = document.createElement('div');
+    row.className = 'msg-row ai';
+    row.innerHTML = `
+        <div class="msg-avatar ai-av">AI</div>
+        <div class="msg-content">
+            <div class="msg-bubble ai-bubble-active"></div>
+            <div class="msg-time">${timeStr()}</div>
+        </div>`;
+    chatMessages.appendChild(row);
+    const bubble = row.querySelector('.ai-bubble-active');
+    if (text) bubble.textContent = text;
+    scrollToBottom();
+    return bubble;
+}
+
+function addThinking() {
+    hideWelcome();
+    const row = document.createElement('div');
+    row.className = 'msg-row ai';
+    row.id = 'thinkingRow';
+    row.innerHTML = `
+        <div class="msg-avatar ai-av">AI</div>
+        <div class="msg-content">
+            <div class="thinking-dots"><span></span><span></span><span></span></div>
+        </div>`;
+    chatMessages.appendChild(row);
+    scrollToBottom();
+}
+
+function removeThinking() {
+    const el = document.getElementById('thinkingRow');
+    if (el) el.remove();
+}
+
+function addEventCard(type, icon, text) {
+    const card = document.createElement('div');
+    card.className = `event-card ${type}`;
+    card.innerHTML = `<span class="event-icon">${icon}</span><span>${escapeHtml(text)}</span>`;
+    chatMessages.appendChild(card);
+    scrollToBottom();
+}
+
+/** 添加 HITL 确认卡片 */
+function addHitlConfirmCard(message, feedbacks) {
+    hideWelcome();
+    const card = document.createElement('div');
+    card.className = 'hitl-confirm-card';
+    card.id = 'hitlConfirmCard';
+
+    let toolDetailsHtml = '';
+    if (feedbacks && feedbacks.length > 0) {
+        for (const fb of feedbacks) {
+            let argsDisplay = fb.arguments || '{}';
+            // 尝试格式化 JSON
+            try {
+                const parsed = JSON.parse(argsDisplay);
+                argsDisplay = Object.entries(parsed)
+                    .filter(([k, v]) => v !== null && v !== undefined)
+                    .map(([k, v]) => `${k}: ${v}`)
+                    .join(', ');
+            } catch (e) { /* 保持原始格式 */ }
+
+            toolDetailsHtml += `
+                <div class="hitl-tool-detail">
+                    <div><span class="hitl-tool-label">工具：</span>${escapeHtml(fb.toolName || '')}</div>
+                    <div><span class="hitl-tool-label">参数：</span>${escapeHtml(argsDisplay)}</div>
+                    ${fb.description ? `<div><span class="hitl-tool-label">说明：</span>${escapeHtml(fb.description)}</div>` : ''}
+                </div>`;
+        }
+    }
+
+    card.innerHTML = `
+        <div class="hitl-confirm-title">
+            <span>&#x1F50D;</span>
+            <span>${escapeHtml(message)}</span>
+        </div>
+        ${toolDetailsHtml}
+        <div class="hitl-actions">
+            <button class="hitl-btn hitl-btn-cancel" onclick="hitlRespond(false)">取消</button>
+            <button class="hitl-btn hitl-btn-confirm" onclick="hitlRespond(true)">确认查询</button>
+        </div>`;
+    chatMessages.appendChild(card);
+    scrollToBottom();
+}
+
+/** 禁用 HITL 卡片按钮 */
+function disableHitlCard() {
+    const card = document.getElementById('hitlConfirmCard');
+    if (card) {
+        card.querySelectorAll('.hitl-btn').forEach(b => {
+            b.disabled = true;
+        });
+    }
+}
+
+// ==================== SSE 流式读取（共享逻辑） ====================
+
+async function processSSEStream(response) {
+    if (!response.ok || !response.body) {
+        removeThinking();
+        addEventCard('error', '\u26A0', `请求失败 HTTP ${response.status}`);
+        return;
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const parts = buffer.split('\n\n');
+        buffer = parts.pop() || '';
+
+        for (const part of parts) {
+            for (const line of part.split('\n')) {
+                if (!line.startsWith('data:')) continue;
+                const raw = line.substring(5).trim();
+                if (!raw) continue;
+
+                try {
+                    const payload = JSON.parse(raw);
+                    handleSSEEvent(payload);
+                } catch (e) {
+                    console.warn('SSE 解析失败:', raw, e);
+                }
+            }
+        }
+    }
+}
+
+// ==================== SSE 事件处理 ====================
+
+function handleSSEEvent(payload) {
+    const event = payload.event || 'unknown';
+    const data  = payload.data || {};
+
+    switch (event) {
+        case 'meta':
+            if (data.sessionId) sessionIdInput.value = data.sessionId;
+            break;
+
+        case 'thought':
+            break;
+
+        case 'tool':
+            if (data.status === 'completed') {
+                addEventCard('tool', '\uD83D\uDD27', `工具 ${data.name || 'queryProducts'} 执行完成`);
+            } else {
+                addEventCard('tool', '\u2699', `正在调用工具 ${data.name || ''}...`);
+            }
+            break;
+
+        case 'final':
+            removeThinking();
+            if (!currentAiBubble) {
+                currentAiBubble = addAiMessage('');
+            }
+            if (data.delta) {
+                currentAiBubble.textContent += data.delta;
+                scrollToBottom();
+            }
+            break;
+
+        case 'hitl':
+            removeThinking();
+            if (data.action === 'confirm') {
+                // 展示确认卡片
+                addHitlConfirmCard(
+                    data.message || 'AI 想要执行查询，请确认',
+                    data.feedbacks || []
+                );
+            } else {
+                // 其他 HITL 动作（如 supplement），作为提示展示
+                addEventCard('hitl', '\uD83D\uDCAC', data.message || '请补充查询条件');
+            }
+            break;
+
+        case 'done':
+            removeThinking();
+            break;
+
+        case 'error':
+            removeThinking();
+            addEventCard('error', '\u26A0', data.message || '发生未知错误');
+            break;
+
+        default:
+            console.log('未知SSE事件:', event, data);
+            break;
+    }
+}
+
+// ==================== 发送消息 ====================
+
+async function sendMessage(text) {
+    const message = (text || messageInput.value).trim();
+    if (!message || isBusy) return;
+
+    messageInput.value = '';
+    autoResizeTextarea();
+    setBusy(true);
+    currentAiBubble = null;
+
+    addUserMessage(message);
+    addThinking();
+
+    try {
+        const response = await fetch(BASE_URL + '/ai/product/chat/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sessionId: sessionIdInput.value || null,
+                message: message,
+                hitlApproved: null
+            })
+        });
+        await processSSEStream(response);
+    } catch (err) {
+        removeThinking();
+        addEventCard('error', '\u26A0', `连接失败：${err.message}`);
+    } finally {
+        setBusy(false);
+        currentAiBubble = null;
+        messageInput.focus();
+    }
+}
+
+// ==================== HITL 响应 ====================
+
+async function hitlRespond(approved) {
+    if (isBusy) return;
+
+    disableHitlCard();
+    setBusy(true);
+    currentAiBubble = null;
+
+    if (approved) {
+        addEventCard('system', '\u2705', '已确认，正在执行查询...');
+    } else {
+        addEventCard('system', '\u274C', '已取消查询');
+    }
+    addThinking();
+
+    try {
+        const response = await fetch(BASE_URL + '/ai/product/chat/stream', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sessionId: sessionIdInput.value || null,
+                message: null,
+                hitlApproved: approved
+            })
+        });
+        await processSSEStream(response);
+    } catch (err) {
+        removeThinking();
+        addEventCard('error', '\u26A0', `操作失败：${err.message}`);
+    } finally {
+        setBusy(false);
+        currentAiBubble = null;
+        messageInput.focus();
+    }
+}
+
+// ==================== 查询历史 ====================
+
+async function fetchHistory() {
+    const sessionId = sessionIdInput.value.trim();
+    if (!sessionId) {
+        addEventCard('error', '\u26A0', '没有会话ID，请先发送一条消息');
+        return;
+    }
+
+    historyBtn.disabled = true;
+    addEventCard('system', '\uD83D\uDCDA', '正在加载历史记录...');
+
+    try {
+        const response = await fetch(
+            `${BASE_URL}/ai/product/chat/history?sessionId=${encodeURIComponent(sessionId)}&limit=100`
+        );
+        if (!response.ok) {
+            addEventCard('error', '\u26A0', `查询失败 HTTP ${response.status}`);
+            return;
+        }
+
+        const result = await response.json();
+        if (!result || result.code !== 200 || !result.data) {
+            addEventCard('error', '\u26A0', `返回异常：${JSON.stringify(result)}`);
+            return;
+        }
+
+        const list = Array.isArray(result.data.list) ? result.data.list : [];
+        if (list.length === 0) {
+            addEventCard('system', '\uD83D\uDCED', '暂无历史消息');
+            return;
+        }
+
+        chatMessages.innerHTML = '';
+        addEventCard('system', '\uD83D\uDCDA', `已加载 ${list.length} 条历史记录`);
+
+        for (const item of list) {
+            const role = item.role || 'unknown';
+            const eventType = item.eventType || 'message';
+            const content = item.content || '';
+
+            if (role === 'user' && eventType === 'message') {
+                addUserMessage(content);
+            } else if (role === 'assistant' && eventType === 'message') {
+                addAiMessage(content);
+            } else if (eventType === 'hitl') {
+                addEventCard('hitl', '\uD83D\uDCAC', content || 'HITL 事件');
+            } else if (eventType === 'tool') {
+                addEventCard('tool', '\uD83D\uDD27', content || '工具调用');
+            } else if (eventType === 'error') {
+                addEventCard('error', '\u26A0', content);
+            } else {
+                addEventCard('system', '\uD83D\uDCDD', `[${role}/${eventType}] ${content}`);
+            }
+        }
+    } catch (err) {
+        addEventCard('error', '\u26A0', `历史查询异常：${err.message}`);
+    } finally {
+        historyBtn.disabled = false;
+    }
+}
+
+// ==================== 输入框自动高度 ====================
+
+function autoResizeTextarea() {
+    messageInput.style.height = 'auto';
+    messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+}
+
+// ==================== 事件绑定 ====================
+
+sendBtn.addEventListener('click', () => sendMessage());
+
+messageInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+messageInput.addEventListener('input', autoResizeTextarea);
+historyBtn.addEventListener('click', fetchHistory);
+
+clearBtn.addEventListener('click', () => {
+    chatMessages.innerHTML = '';
+    if (welcomeCard) { chatMessages.appendChild(welcomeCard); welcomeCard.style.display = ''; }
+    currentAiBubble = null;
+});
+
+newBtn.addEventListener('click', () => {
+    sessionIdInput.value = '';
+    chatMessages.innerHTML = '';
+    currentAiBubble = null;
+    location.reload();
+});
+
+document.querySelectorAll('.quick-q').forEach(el => {
+    el.addEventListener('click', () => {
+        const q = el.getAttribute('data-q');
+        if (q) sendMessage(q);
+    });
+});
+</script>
+</body>
+</html>
