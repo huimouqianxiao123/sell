@@ -6,6 +6,8 @@ import com.alibaba.cloud.ai.graph.agent.hook.hip.ToolConfig;
 import com.alibaba.cloud.ai.graph.agent.hook.skills.SkillsAgentHook;
 import com.alibaba.cloud.ai.graph.agent.hook.summarization.SummarizationHook;
 import com.alibaba.cloud.ai.graph.checkpoint.savers.redis.RedisSaver;
+import com.example.sell.ai.tool.HybridSearchRequest;
+import com.example.sell.ai.tool.HybridSearchTool;
 import com.example.sell.ai.tool.ProductQueryRequest;
 import com.example.sell.ai.tool.ProductQueryTool;
 import jakarta.annotation.Resource;
@@ -50,6 +52,9 @@ public class AgentConfig {
     private ProductQueryTool productQueryTool;
 
     @Resource
+    private HybridSearchTool hybridSearchTool;
+
+    @Resource
     private RedissonClient redissonClient;
 
     @Resource
@@ -85,6 +90,9 @@ public class AgentConfig {
                 .inputType(ProductQueryRequest.class)
                 .build();
 
+        // 混合检索工具：语义向量搜索 + 关键词搜索，检索历史对话作为参考
+        ToolCallback hybridSearchCallback = buildHybridSearchCallback();
+
         // HITL Hook：工具调用前提示用户确认
         HumanInTheLoopHook hitlHook = HumanInTheLoopHook.builder()
                 .approvalOn("queryProducts", ToolConfig.builder()
@@ -106,7 +114,7 @@ public class AgentConfig {
                 .name("product_customer_service")
                 .model(bigModel)
                 .systemPrompt(systemPrompt)
-                .tools(List.of(productQueryCallback))
+                .tools(List.of(productQueryCallback, hybridSearchCallback))
                 .hooks(List.of(hitlHook, summarizationHook, skillsAgentHook))
                 .saver(redisSaver)
                 .build();
@@ -133,9 +141,22 @@ public class AgentConfig {
                 .model(bigModel)
                 .systemPrompt("你是一个友好的AI助手，可以回答各类问题。请使用中文回答。" +
                         "如果用户问到商品相关的问题，请引导他们明确表达需求，你会转交给专业的商品客服处理。")
-                .tools(List.of())
+                .tools(List.of(buildHybridSearchCallback()))
                 .hooks(List.of(summarizationHook))
                 .saver(redisSaver)
+                .build();
+    }
+
+    /**
+     * 构建混合检索工具回调（供多个 Agent 复用）
+     */
+    private ToolCallback buildHybridSearchCallback() {
+        return FunctionToolCallback
+                .builder("hybridSearch", hybridSearchTool)
+                .description("混合检索历史对话记录。当需要参考过往相似问答时调用此工具。"
+                        + "结合语义向量搜索和关键词匹配两种方式，检索与用户问题最相关的历史对话。"
+                        + "参数说明：query=搜索文本(必填), limit=返回数量(默认5,最大10)")
+                .inputType(HybridSearchRequest.class)
                 .build();
     }
 

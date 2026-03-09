@@ -6,7 +6,11 @@ import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 
 
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
+import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingModel;
+import com.alibaba.cloud.ai.dashscope.embedding.DashScopeEmbeddingOptions;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.document.MetadataMode;
+import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,4 +54,20 @@ public class ModelConfig {
                 .defaultOptions(options)
                 .build();
     }
+
+    @Bean("embeddingModel")
+    public DashScopeEmbeddingModel embeddingModel() {
+        // 不传 baseUrl，使用 DashScopeApi 默认地址（https://dashscope.aliyuncs.com）
+        DashScopeApi dashScopeApi = DashScopeApi.builder()
+                .apiKey(apiKey)
+                .build();
+        DashScopeEmbeddingOptions options = DashScopeEmbeddingOptions.builder()
+                .withModel("text-embedding-v1")
+                .build();
+        MetadataMode metadataMode = MetadataMode.NONE;
+        return new DashScopeEmbeddingModel(dashScopeApi,metadataMode,options);
+    }
+
+
+
 }

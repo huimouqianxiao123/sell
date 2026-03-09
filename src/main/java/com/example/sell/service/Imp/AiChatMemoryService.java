@@ -5,7 +5,7 @@ import com.example.sell.domain.pojo.AiChatMessage;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -46,7 +46,7 @@ public class AiChatMemoryService {
     private static final int MAX_TOKENS = 8000;
 
     @Resource
-    private StringRedisTemplate stringRedisTemplate;
+    private RedisTemplate<String, Object>redisTemplate;
 
     @Resource
     private AiChatMessageMapper aiChatMessageMapper;
@@ -121,7 +121,9 @@ public class AiChatMemoryService {
         }
         try {
             String key = KEY_CHAT_MESSAGES + sessionId;
-            String existing = stringRedisTemplate.opsForValue().get(key);
+            Object raw = redisTemplate.opsForValue().get(key);
+            String existing = raw != null ? raw.toString() : null;
+
             String roleLabel = "user".equals(role) ? "用户" : "助手";
             String newLine = roleLabel + ": " + content + "\n";
 
@@ -129,7 +131,7 @@ public class AiChatMemoryService {
                     ? existing + newLine
                     : newLine;
 
-            stringRedisTemplate.opsForValue().set(key, updated, CACHE_TTL_HOURS, TimeUnit.HOURS);
+            redisTemplate.opsForValue().set(key, updated, CACHE_TTL_HOURS, TimeUnit.HOURS);
 
             // 追加消息后清除旧的压缩摘要（因为上下文已变化）
             evictSummary(sessionId);
@@ -148,8 +150,8 @@ public class AiChatMemoryService {
             return;
         }
         try {
-            stringRedisTemplate.delete(KEY_CHAT_MESSAGES + sessionId);
-            stringRedisTemplate.delete(KEY_CHAT_SUMMARY + sessionId);
+            redisTemplate.delete(KEY_CHAT_MESSAGES + sessionId);
+            redisTemplate.delete(KEY_CHAT_SUMMARY + sessionId);
             log.info("[AI记忆] 缓存已清除, sessionId={}", sessionId);
         } catch (Exception e) {
             log.warn("[AI记忆] 清除缓存失败, sessionId={}", sessionId, e);
@@ -261,7 +263,8 @@ public class AiChatMemoryService {
 
     private String getCachedMessages(String sessionId) {
         try {
-            return stringRedisTemplate.opsForValue().get(KEY_CHAT_MESSAGES + sessionId);
+            Object raw = redisTemplate.opsForValue().get(KEY_CHAT_MESSAGES + sessionId);
+            return raw != null ? raw.toString() : null;
         } catch (Exception e) {
             log.warn("[AI记忆] 读取消息缓存失败, sessionId={}", sessionId, e);
             return null;
@@ -270,7 +273,7 @@ public class AiChatMemoryService {
 
     private void cacheMessages(String sessionId, String text) {
         try {
-            stringRedisTemplate.opsForValue().set(
+            redisTemplate.opsForValue().set(
                     KEY_CHAT_MESSAGES + sessionId, text,
                     CACHE_TTL_HOURS, TimeUnit.HOURS);
         } catch (Exception e) {
@@ -280,7 +283,8 @@ public class AiChatMemoryService {
 
     private String getCachedSummary(String sessionId) {
         try {
-            return stringRedisTemplate.opsForValue().get(KEY_CHAT_SUMMARY + sessionId);
+            Object raw = redisTemplate.opsForValue().get(KEY_CHAT_SUMMARY + sessionId);
+            return raw != null ? raw.toString() : null;
         } catch (Exception e) {
             log.warn("[AI记忆] 读取摘要缓存失败, sessionId={}", sessionId, e);
             return null;
@@ -289,7 +293,7 @@ public class AiChatMemoryService {
 
     private void cacheSummary(String sessionId, String summary) {
         try {
-            stringRedisTemplate.opsForValue().set(
+         redisTemplate.opsForValue().set(
                     KEY_CHAT_SUMMARY + sessionId, summary,
                     CACHE_TTL_HOURS, TimeUnit.HOURS);
         } catch (Exception e) {
@@ -299,7 +303,7 @@ public class AiChatMemoryService {
 
     private void evictSummary(String sessionId) {
         try {
-            stringRedisTemplate.delete(KEY_CHAT_SUMMARY + sessionId);
+            redisTemplate.delete(KEY_CHAT_SUMMARY + sessionId);
         } catch (Exception e) {
             log.warn("[AI记忆] 清除摘要缓存失败, sessionId={}", sessionId, e);
         }

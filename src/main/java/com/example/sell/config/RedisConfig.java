@@ -19,6 +19,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * 普通操作使用 RedisTemplate / StringRedisTemplate，
  * Lua 脚本和分布式锁使用 Redisson（通过 LuaScripts + DistributedLockUtil）。
  * </p>
+ * @author 屈轩
  */
 @Configuration
 public class RedisConfig {
