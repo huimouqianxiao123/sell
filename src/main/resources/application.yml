@@ -13,7 +13,7 @@ server:
 spring:
   ai:
     dashscope:
-      api-key: sk-a2a5661e418d4c42931e3371953f19a4
+      api-key: sk-a2a5661e418d4c42931e3371953f19a4我
   main:
     allow-bean-definition-overriding: true
   servlet:
@@ -114,3 +114,9 @@ rocketmq:
     retry-times-when-send-failed: 2
     # 异步发送失败重试次数
     retry-times-when-send-async-failed: 2
+
+# 日志配置
+logging:
+  level:
+    com.example.sell.scheduler: debug  # 定时任务包日志级别设置为debug，方便查看任务运行情况
+    root: info

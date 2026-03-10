@@ -66,7 +66,7 @@ public class MiaoShaTask {
         String lockKey = "seckill:warmup:lock";
         String lockValue = distributedLockUtil.tryLock(lockKey, 30, TimeUnit.SECONDS);
         if (lockValue == null) {
-            log.debug("【秒杀预热】其他实例正在执行预热任务，跳过");
+            log.info("【秒杀预热】其他实例正在执行预热任务，跳过");
             return;
         }
         try {
@@ -89,7 +89,7 @@ public class MiaoShaTask {
             int activeCount = activeList.size();
 
             if (upcomingCount == 0 && activeCount == 0) {
-                log.debug("【秒杀预热】暂无需要预热的秒杀商品");
+                log.info("【秒杀预热】暂无需要预热的秒杀商品");
                 return;
             }
 
@@ -158,7 +158,7 @@ public class MiaoShaTask {
         String lockKey = "seckill:status:update:lock";
         String lockValue = distributedLockUtil.tryLock(lockKey, 30, TimeUnit.SECONDS);
         if (lockValue == null) {
-            log.debug("【状态更新】其他实例正在执行状态更新任务，跳过");
+            log.info("【状态更新】其他实例正在执行状态更新任务，跳过");
             return;
         }
         try {
@@ -239,7 +239,7 @@ public class MiaoShaTask {
         String lockKey = "seckill:cache:clean:lock";
         String lockValue = distributedLockUtil.tryLock(lockKey, 60, TimeUnit.SECONDS);
         if (lockValue == null) {
-            log.debug("【缓存清理】其他实例正在执行缓存清理任务，跳过");
+            log.info("【缓存清理】其他实例正在执行缓存清理任务，跳过");
             return;
         }
         try {
@@ -291,7 +291,7 @@ public class MiaoShaTask {
         String lockKey = "seckill:stock:sync:lock";
         String lockValue = distributedLockUtil.tryLock(lockKey, 60, TimeUnit.SECONDS);
         if (lockValue == null) {
-            log.debug("【库存同步】其他实例正在执行库存同步任务，跳过");
+            log.info("【库存同步】其他实例正在执行库存同步任务，跳过");
             return;
         }
         try {

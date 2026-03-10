@@ -66,14 +66,14 @@ public class SeckillMessageCompensationTask {
         }
 
         try {
-            log.debug("【消息补偿】开始扫描发送失败的消息...");
+            log.info("【消息补偿】开始扫描发送失败的消息...");
 
             // 查询待发送或发送失败的消息
             List<SeckillMessage> pendingMessages = seckillMessageMapper.findPendingMessages(
                     SeckillMessage.MAX_SEND_RETRY, 100);
 
             if (pendingMessages.isEmpty()) {
-                log.debug("【消息补偿】暂无需要重发的消息");
+                log.info("【消息补偿】暂无需要重发的消息");
                 return;
             }
 
@@ -143,13 +143,13 @@ public class SeckillMessageCompensationTask {
         }
 
         try {
-            log.debug("【消费补偿】开始扫描消费失败的消息...");
+            log.info("【消费补偿】开始扫描消费失败的消息...");
 
             List<SeckillMessage> failedMessages = seckillMessageMapper.findConsumeFailedMessages(
                     SeckillMessage.MAX_CONSUME_RETRY, 50);
 
             if (failedMessages.isEmpty()) {
-                log.debug("【消费补偿】暂无需要重新消费的消息");
+                log.info("【消费补偿】暂无需要重新消费的消息");
                 return;
             }
 
@@ -210,7 +210,7 @@ public class SeckillMessageCompensationTask {
         }
 
         try {
-            log.debug("【超时检测】开始扫描超时未消费的消息...");
+            log.info("【超时检测】开始扫描超时未消费的消息...");
 
             // 查询发送成功但超过10分钟未消费的消息
             List<SeckillMessage> timeoutMessages = seckillMessageMapper.findTimeoutMessages(10, 50);

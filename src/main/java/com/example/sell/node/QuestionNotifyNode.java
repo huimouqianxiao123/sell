@@ -8,7 +8,6 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Component;
-
 import java.util.Map;
 
 /**
@@ -41,7 +40,6 @@ public class QuestionNotifyNode implements NodeActionWithConfig {
         // 1. 从 state 中获取用户问题
         String question = state.value(StateKeys.QUESTION, String.class)
                 .orElseThrow(() -> new IllegalArgumentException("未找到问题内容: " + StateKeys.QUESTION));
-
         log.info("[问题分类] 开始分类, 问题: {}", question);
 
         // 2. 调用分类逻辑

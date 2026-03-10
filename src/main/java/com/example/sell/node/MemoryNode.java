@@ -37,7 +37,6 @@ public class MemoryNode implements NodeActionWithConfig {
 
         log.info("[记忆加载] 加载完成, sessionId={}, 上下文长度={}",
                 sessionId, memoryContext != null ? memoryContext.length() : 0);
-
         return Map.of(StateKeys.MEMORY_CONTEXT, memoryContext != null ? memoryContext : "");
     }
 }
