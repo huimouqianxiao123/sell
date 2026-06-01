@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ProjectStructureTest {
 
     private static final Path MAIN_JAVA = Path.of("src", "main", "java");
+    private static final Path MAIN_RESOURCES = Path.of("src", "main", "resources");
 
     @Test
     void shouldUseClearLayeredPackages() throws IOException {
@@ -37,6 +38,29 @@ class ProjectStructureTest {
             assertFalse(content.contains("com.example.sell.domain.vo"), javaFile.toString());
             assertFalse(content.contains("com.example.sell.domain.enums"), javaFile.toString());
             assertFalse(content.contains("com.example.sell.service.Imp"), javaFile.toString());
+        }
+    }
+
+    @Test
+    void shouldNotUseLegacyPackageNamesInResources() throws IOException {
+        List<Path> resourceFiles;
+        try (var stream = Files.walk(MAIN_RESOURCES)) {
+            resourceFiles = stream
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(".xml")
+                            || path.toString().endsWith(".yml")
+                            || path.toString().endsWith(".yaml")
+                            || path.toString().endsWith(".properties"))
+                    .toList();
+        }
+
+        for (Path resourceFile : resourceFiles) {
+            String content = Files.readString(resourceFile, StandardCharsets.UTF_8);
+            assertFalse(content.contains("com.example.sell.domain.pojo"), resourceFile.toString());
+            assertFalse(content.contains("com.example.sell.domain.Dto"), resourceFile.toString());
+            assertFalse(content.contains("com.example.sell.domain.vo"), resourceFile.toString());
+            assertFalse(content.contains("com.example.sell.domain.enums"), resourceFile.toString());
+            assertFalse(content.contains("com.example.sell.service.Imp"), resourceFile.toString());
         }
     }
 }

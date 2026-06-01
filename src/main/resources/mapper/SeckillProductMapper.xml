@@ -3,7 +3,7 @@
 <mapper namespace="com.example.sell.dao.SeckillProductMapper">
     
     <!-- 查询秒杀商品列表（包含商品详情） -->
-    <select id="getSeckillProduct" resultType="com.example.sell.domain.vo.SeckillProductDetailVo">
+    <select id="getSeckillProduct" resultType="com.example.sell.vo.SeckillProductDetailVo">
         <![CDATA[
         SELECT
         sp.id,

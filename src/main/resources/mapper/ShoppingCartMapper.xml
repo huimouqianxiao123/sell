@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.sell.dao.ShoppingCartMapper">
 
-    <select id="listShoppingCartVo" resultType="com.example.sell.domain.vo.ShoppingCartVo">
+    <select id="listShoppingCartVo" resultType="com.example.sell.vo.ShoppingCartVo">
         SELECT
             sc.id,
             sc.product_id AS productId,
