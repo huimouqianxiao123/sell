@@ -1,7 +1,7 @@
 package com.example.sell.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.sell.domain.pojo.Product;
+import com.example.sell.entity.Product;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

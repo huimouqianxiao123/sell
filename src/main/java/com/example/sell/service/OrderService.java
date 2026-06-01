@@ -1,10 +1,10 @@
 package com.example.sell.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.sell.domain.Dto.OrderListRequest;
-import com.example.sell.domain.pojo.Orders;
-import com.example.sell.domain.vo.OrderDetailVO;
-import com.example.sell.domain.vo.OrderVO;
+import com.example.sell.dto.OrderListRequest;
+import com.example.sell.entity.Orders;
+import com.example.sell.vo.OrderDetailVO;
+import com.example.sell.vo.OrderVO;
 
 import java.util.List;
 

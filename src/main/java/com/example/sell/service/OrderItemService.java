@@ -2,7 +2,7 @@ package com.example.sell.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.sell.domain.pojo.OrderItem;
+import com.example.sell.entity.OrderItem;
 
 import java.util.List;
 

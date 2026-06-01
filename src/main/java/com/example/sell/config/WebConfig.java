@@ -30,6 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(
                         "/auth/login",
                         "/auth/register",
+                        "/knowledge/upload",
                 "/ai/**",
                 "/ai-test.html",
                         "/alipay/notify",

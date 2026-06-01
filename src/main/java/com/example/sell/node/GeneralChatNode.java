@@ -5,7 +5,8 @@ import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.RunnableConfig;
 import com.alibaba.cloud.ai.graph.action.NodeActionWithConfig;
 import com.alibaba.cloud.ai.graph.agent.ReactAgent;
-import com.example.sell.service.Imp.AiChatPersistenceService;
+import com.example.sell.common.AiRequestContextHolder;
+import com.example.sell.service.impl.AiChatPersistenceService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -86,6 +87,7 @@ public class GeneralChatNode implements NodeActionWithConfig {
 
             // 5. 提取回答
             String answer = extractAnswer(result);
+            answer = appendCitations(answer);
             log.info("[通用聊天Agent] AI 回答（前200字）: {}",
                     answer.length() > 200 ? answer.substring(0, 200) + "..." : answer);
 
@@ -177,5 +179,19 @@ public class GeneralChatNode implements NodeActionWithConfig {
             t = t.getCause();
         }
         return false;
+    }
+
+    private String appendCitations(String answer) {
+        String citationBlock = AiRequestContextHolder.renderCitationBlock(3);
+        if (!StringUtils.hasText(citationBlock)) {
+            return answer;
+        }
+        if (!StringUtils.hasText(answer)) {
+            return citationBlock;
+        }
+        if (answer.contains("参考来源：")) {
+            return answer;
+        }
+        return answer.trim() + "\n\n" + citationBlock;
     }
 }

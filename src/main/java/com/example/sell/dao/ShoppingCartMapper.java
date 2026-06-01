@@ -1,8 +1,8 @@
 package com.example.sell.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.sell.domain.pojo.ShoppingCart;
-import com.example.sell.domain.vo.ShoppingCartVo;
+import com.example.sell.entity.ShoppingCart;
+import com.example.sell.vo.ShoppingCartVo;
 
 import java.util.List;
 

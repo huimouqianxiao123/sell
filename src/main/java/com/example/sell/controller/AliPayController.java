@@ -3,7 +3,7 @@ package com.example.sell.controller;
 import com.alipay.api.AlipayApiException;
 import com.example.sell.common.R;
 import com.example.sell.config.AlipayConfig;
-import com.example.sell.domain.Dto.RefundRequest;
+import com.example.sell.dto.RefundRequest;
 import com.example.sell.service.AlipayService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;

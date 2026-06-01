@@ -2,12 +2,12 @@ package com.example.sell.scheduler;
 
 import com.example.sell.dao.SeckillMessageMapper;
 import com.example.sell.dao.SeckillProductMapper;
-import com.example.sell.domain.pojo.SeckillMessage;
-import com.example.sell.domain.pojo.SeckillProduct;
-import com.example.sell.service.Imp.RocketMQMessageService;
-import com.example.sell.service.Imp.SeckillIdempotentService;
-import com.example.sell.service.Imp.SeckillRollbackService;
-import com.example.sell.service.Imp.AlertService;
+import com.example.sell.entity.SeckillMessage;
+import com.example.sell.entity.SeckillProduct;
+import com.example.sell.service.impl.RocketMQMessageService;
+import com.example.sell.service.impl.SeckillIdempotentService;
+import com.example.sell.service.impl.SeckillRollbackService;
+import com.example.sell.service.impl.AlertService;
 import com.example.sell.utils.DistributedLockUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;

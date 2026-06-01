@@ -2,8 +2,8 @@ package com.example.sell.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.sell.domain.Dto.ProductRequest;
-import com.example.sell.domain.pojo.Product;
+import com.example.sell.dto.ProductRequest;
+import com.example.sell.entity.Product;
 
 import java.util.List;
 

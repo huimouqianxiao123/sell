@@ -1,4 +1,4 @@
-package com.example.sell.utils;
+package com.example.sell;
 
 import org.yaml.snakeyaml.Yaml;
 

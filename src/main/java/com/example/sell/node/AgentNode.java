@@ -7,7 +7,8 @@ import com.alibaba.cloud.ai.graph.RunnableConfig;
 import com.alibaba.cloud.ai.graph.action.InterruptionMetadata;
 import com.alibaba.cloud.ai.graph.action.NodeActionWithConfig;
 import com.alibaba.cloud.ai.graph.agent.ReactAgent;
-import com.example.sell.service.Imp.AiChatPersistenceService;
+import com.example.sell.common.AiRequestContextHolder;
+import com.example.sell.service.impl.AiChatPersistenceService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -56,6 +57,7 @@ public class AgentNode implements NodeActionWithConfig {
         String question = state.value(StateKeys.QUESTION, String.class).orElse("");
         String sessionId = state.value(StateKeys.SESSION_ID, String.class).orElse("");
         String memoryContext = state.value(StateKeys.MEMORY_CONTEXT, String.class).orElse("");
+        String userId = state.value(StateKeys.USER_ID, String.class).orElse("");
 
         log.info("[商品客服Agent] 开始处理, sessionId={}, 问题: {}", sessionId, question);
 
@@ -100,7 +102,7 @@ public class AgentNode implements NodeActionWithConfig {
             extractAndPersistSummary(sessionId, result);
 
             // 5. 处理结果
-            return handleAgentResult(sessionId, question, result);
+            return handleAgentResult(sessionId, userId, question, result);
         } catch (Exception e) {
             log.error("[商品客服Agent] 执行失败, sessionId={}", sessionId, e);
             return Map.of(
@@ -124,7 +126,7 @@ public class AgentNode implements NodeActionWithConfig {
     /**
      * 处理 Agent 执行结果
      */
-    private Map<String, Object> handleAgentResult(String sessionId, String originalMessage,
+    private Map<String, Object> handleAgentResult(String sessionId, String userId, String originalMessage,
                                                    Optional<NodeOutput> result) {
         if (result.isEmpty()) {
             log.warn("[商品客服Agent] Agent 返回空结果, sessionId={}", sessionId);
@@ -163,7 +165,7 @@ public class AgentNode implements NodeActionWithConfig {
             // 保存 HITL 待确认状态到 Redis
             aiChatPersistenceService.savePendingHitl(sessionId, originalMessage, feedbacks);
             aiChatPersistenceService.saveSystemEvent(
-                    sessionId, "hitl", "等待用户确认工具调用", Map.of("feedbacks", feedbacks));
+                    sessionId, userId, "hitl", "等待用户确认工具调用", Map.of("feedbacks", feedbacks));
 
             resultMap.put(StateKeys.HITL_INTERRUPTED, true);
             resultMap.put(StateKeys.HITL_FEEDBACKS, JSONUtil.toJsonStr(feedbacks));
@@ -172,6 +174,7 @@ public class AgentNode implements NodeActionWithConfig {
         } else {
             // 正常结果 —— 提取 AI 回答
             String answer = extractAnswer(output);
+            answer = appendCitations(answer);
             log.info("[商品客服Agent] AI 回答（前200字）: {}",
                     answer.length() > 200 ? answer.substring(0, 200) + "..." : answer);
             resultMap.put(StateKeys.AGENT_RESULT, answer);
@@ -284,5 +287,19 @@ public class AgentNode implements NodeActionWithConfig {
             t = t.getCause();
         }
         return false;
+    }
+
+    private String appendCitations(String answer) {
+        String citationBlock = AiRequestContextHolder.renderCitationBlock(3);
+        if (!StringUtils.hasText(citationBlock)) {
+            return answer;
+        }
+        if (!StringUtils.hasText(answer)) {
+            return citationBlock;
+        }
+        if (answer.contains("参考来源：")) {
+            return answer;
+        }
+        return answer.trim() + "\n\n" + citationBlock;
     }
 }

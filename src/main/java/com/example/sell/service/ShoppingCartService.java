@@ -1,8 +1,8 @@
 package com.example.sell.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.sell.domain.pojo.ShoppingCart;
-import com.example.sell.domain.vo.ShoppingCartListVo;
+import com.example.sell.entity.ShoppingCart;
+import com.example.sell.vo.ShoppingCartListVo;
 
 import java.util.List;
 

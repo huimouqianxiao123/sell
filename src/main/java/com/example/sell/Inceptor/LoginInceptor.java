@@ -3,7 +3,7 @@ package com.example.sell.Inceptor;
 import cn.hutool.json.JSONUtil;
 import com.example.sell.common.UserContext;
 import com.example.sell.common.UserInfo;
-import com.example.sell.domain.vo.UserVO;
+import com.example.sell.vo.UserVO;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

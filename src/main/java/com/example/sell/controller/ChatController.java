@@ -1,8 +1,8 @@
 package com.example.sell.controller;
 
 import com.example.sell.common.R;
-import com.example.sell.domain.Dto.AiProductChatRequest;
-import com.example.sell.domain.vo.AiChatHistoryVo;
+import com.example.sell.dto.AiProductChatRequest;
+import com.example.sell.vo.AiChatHistoryVo;
 import com.example.sell.service.AiProductCustomerService;
 import jakarta.annotation.Resource;
 import org.springframework.http.MediaType;

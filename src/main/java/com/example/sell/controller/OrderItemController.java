@@ -1,7 +1,7 @@
 package com.example.sell.controller;
 
 import com.example.sell.common.R;
-import com.example.sell.domain.pojo.OrderItem;
+import com.example.sell.entity.OrderItem;
 import com.example.sell.service.OrderItemService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;

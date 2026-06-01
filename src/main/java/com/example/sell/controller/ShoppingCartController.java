@@ -1,8 +1,8 @@
 package com.example.sell.controller;
 
 import com.example.sell.common.R;
-import com.example.sell.domain.vo.ShoppingCartListVo;
-import com.example.sell.domain.vo.ShoppingCartVo;
+import com.example.sell.vo.ShoppingCartListVo;
+import com.example.sell.vo.ShoppingCartVo;
 import com.example.sell.service.ShoppingCartService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;

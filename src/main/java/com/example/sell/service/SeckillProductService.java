@@ -1,9 +1,9 @@
 package com.example.sell.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.sell.domain.Dto.SeckillProductRequest;
-import com.example.sell.domain.pojo.SeckillProduct;
-import com.example.sell.domain.vo.SeckillProductDetailVo;
+import com.example.sell.dto.SeckillProductRequest;
+import com.example.sell.entity.SeckillProduct;
+import com.example.sell.vo.SeckillProductDetailVo;
 
 import java.util.List;
 import java.util.Map;

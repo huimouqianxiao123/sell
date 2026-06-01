@@ -1,7 +1,7 @@
 package com.example.sell.service;
 
-import com.example.sell.domain.Dto.AiProductChatRequest;
-import com.example.sell.domain.vo.AiChatHistoryVo;
+import com.example.sell.dto.AiProductChatRequest;
+import com.example.sell.vo.AiChatHistoryVo;
 import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 

@@ -48,13 +48,6 @@
             <version>2.3.0</version>
         </dependency>
 
-        <!-- RocketMQ Tools for Admin operations -->
-        <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-tools</artifactId>
-            <version>5.2.0</version>
-        </dependency>
-
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
@@ -76,6 +69,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
         </dependency>
         <!-- Redisson 分布式锁框架 -->
         <dependency>
@@ -139,6 +136,23 @@
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>3.25.5</version>
+        </dependency>
+
+
+        <!-- 添加 PDFBox 依赖 -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.2</version> <!-- 请根据需要选择最新版本 -->
+        </dependency>
+
+
+
+        <!-- HanLP 中文分词（portable 版，词典内置于 jar，零配置即用） -->
+        <dependency>
+            <groupId>com.hankcs</groupId>
+            <artifactId>hanlp</artifactId>
+            <version>portable-1.8.6</version>
         </dependency>
 
     </dependencies>

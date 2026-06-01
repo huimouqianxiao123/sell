@@ -1,8 +1,8 @@
 package com.example.sell.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.sell.domain.pojo.SeckillProduct;
-import com.example.sell.domain.vo.SeckillProductDetailVo;
+import com.example.sell.entity.SeckillProduct;
+import com.example.sell.vo.SeckillProductDetailVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 

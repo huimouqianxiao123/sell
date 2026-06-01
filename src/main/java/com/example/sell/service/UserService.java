@@ -1,11 +1,11 @@
 package com.example.sell.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.sell.domain.Dto.LoginRequest;
-import com.example.sell.domain.Dto.RegisterRequest;
-import com.example.sell.domain.pojo.User;
-import com.example.sell.domain.vo.LoginVo;
-import com.example.sell.domain.vo.UserVO;
+import com.example.sell.dto.LoginRequest;
+import com.example.sell.dto.RegisterRequest;
+import com.example.sell.entity.User;
+import com.example.sell.vo.LoginVo;
+import com.example.sell.vo.UserVO;
 
 /**
  * @author 屈轩

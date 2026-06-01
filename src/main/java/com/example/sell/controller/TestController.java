@@ -1,7 +1,7 @@
 package com.example.sell.controller;
 
 import com.example.sell.common.R;
-import com.example.sell.domain.pojo.SeckillProduct;
+import com.example.sell.entity.SeckillProduct;
 import com.example.sell.service.SeckillProductService;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;

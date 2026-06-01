@@ -1,7 +1,7 @@
 package com.example.sell.consumer;
 
-import com.example.sell.service.Imp.RocketMQMessageService;
-import com.example.sell.service.Imp.SeckillOrderService;
+import com.example.sell.service.impl.RocketMQMessageService;
+import com.example.sell.service.impl.SeckillOrderService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.common.message.MessageExt;
@@ -9,6 +9,7 @@ import org.apache.rocketmq.spring.annotation.ConsumeMode;
 import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(prefix = "rocketmq.listener", name = "enabled", havingValue = "true", matchIfMissing = true)
 @RocketMQMessageListener(
         topic = "%DLQ%seckill-order-group",
         consumerGroup = "seckill-order-dlq-group",

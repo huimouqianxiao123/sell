@@ -38,4 +38,7 @@ public final class StateKeys {
 
     /** 错误信息 */
     public static final String ERROR = "error";
+
+    /** 当前用户ID（用于用户画像提取） */
+    public static final String USER_ID = "user_id";
 }

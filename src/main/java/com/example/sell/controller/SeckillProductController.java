@@ -1,8 +1,8 @@
 package com.example.sell.controller;
 
 import com.example.sell.common.R;
-import com.example.sell.domain.Dto.SeckillProductRequest;
-import com.example.sell.domain.vo.SeckillProductDetailVo;
+import com.example.sell.dto.SeckillProductRequest;
+import com.example.sell.vo.SeckillProductDetailVo;
 import com.example.sell.service.SeckillProductService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;

@@ -6,13 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.example.sell.dao.OrderItemMapper;
 import com.example.sell.dao.OrderMapper;
 import com.example.sell.dao.ProductMapper;
-import com.example.sell.domain.pojo.OrderItem;
-import com.example.sell.domain.pojo.Orders;
-import com.example.sell.domain.pojo.Product;
+import com.example.sell.entity.OrderItem;
+import com.example.sell.entity.Orders;
+import com.example.sell.entity.Product;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(prefix = "rocketmq.listener", name = "enabled", havingValue = "true", matchIfMissing = true)
 @RocketMQMessageListener(
     topic = "order-timeout-topic",
     consumerGroup = "order-timeout-group"

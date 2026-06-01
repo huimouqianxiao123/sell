@@ -13,7 +13,7 @@ server:
 spring:
   ai:
     dashscope:
-      api-key: sk-a2a5661e418d4c42931e3371953f19a4我
+      api-key: sk-a2a5661e418d4c42931e3371953f19a4
   main:
     allow-bean-definition-overriding: true
   servlet:
@@ -22,19 +22,19 @@ spring:
       max-request-size: 50MB
   data:
     redis:
-      host: 43.139.17.130
-      port: 6739
-      password: ZEmYsnpwF4HE3fhe
+      host: 127.0.0.1
+      port: 6379
+      password: 123456
       database: 0
       redisson:
         config: |
           singleServerConfig:
-            address: "redis://43.139.17.130:6739"
-            password: "ZEmYsnpwF4HE3fhe"
+            address: "redis://127.0.0.1:6379"
+            password: "123456"
             database: 0
             connectionMinimumIdleSize: 10
-            connectionPoolSize: 64
-            timeout: 3000
+            connectionPoolSize: 34
+            timeout: 6000
             retryAttempts: 3
             retryInterval: 1500
           # 看门狗续期时间，默认30秒
@@ -42,18 +42,21 @@ spring:
       lettuce:
         pool:
           # 最大连接数（高并发建议 150-200）
-          max-active: 200
+          max-active: 100
           # 最大空闲连接（建议 max-active 的一半）
-          max-idle: 100
+          max-idle: 50
           # 最小空闲连接（保持一定数量避免冷启动）
-          min-idle: 30
+          min-idle: 10
           # 连接池最大阻塞等待时间（毫秒），负值表示无限制
-          max-wait: 2000
+          max-wait: 3000
         # 关闭超时时间（毫秒）
         shutdown-timeout: 100ms
+      connect-timeout: 5000
 
   application:
     name: sellsystem
+  elasticsearch:
+    uris: http://localhost:9200
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/miaosha?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
@@ -106,6 +109,9 @@ alipay:
 
 rocketmq:
   name-server: 43.139.17.130:9876
+  nameServer: 43.139.17.130:9876
+  listener:
+    enabled: true
   producer:
     group: seckill-producer-group
     # 发送消息超时时间（毫秒）
@@ -120,3 +126,18 @@ logging:
   level:
     com.example.sell.scheduler: debug  # 定时任务包日志级别设置为debug，方便查看任务运行情况
     root: info
+
+tavily:
+  api-key: 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
+
+ai:
+  elasticsearch:
+    enabled: true
+  milvus:
+    init-chat-message-collection: true
+    init-kb-collection: true
+  kb:
+    auto-init: true
+    rebuild-on-startup: false
+  rag:
+    memory-window-days: 30

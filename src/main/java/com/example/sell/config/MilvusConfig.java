@@ -4,6 +4,7 @@ import io.milvus.v2.client.ConnectConfig;
 import io.milvus.v2.client.MilvusClientV2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * @author 屈轩
@@ -18,6 +19,7 @@ public class MilvusConfig {
                 .build();
     }
 
+    @Lazy
     @Bean
     public MilvusClientV2 milvusClient(ConnectConfig connectConfig) {
         return new MilvusClientV2(connectConfig);

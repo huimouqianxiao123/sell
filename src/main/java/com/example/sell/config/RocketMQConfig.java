@@ -24,6 +24,7 @@ public class RocketMQConfig {
     @PostConstruct
     public void init() {
         try {
+
             log.info("【RocketMQ】开始初始化，NameServer地址: {}", 
                 rocketMQTemplate.getProducer().getNamesrvAddr());
             log.info("【RocketMQ】生产者组: {}", 

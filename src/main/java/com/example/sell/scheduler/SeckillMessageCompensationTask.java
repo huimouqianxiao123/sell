@@ -3,10 +3,10 @@ package com.example.sell.scheduler;
 import com.example.sell.dao.OrderMapper;
 import com.example.sell.dao.SeckillMessageMapper;
 import com.example.sell.dao.SeckillProductMapper;
-import com.example.sell.domain.enums.DeadLetterReason;
-import com.example.sell.domain.pojo.SeckillMessage;
-import com.example.sell.service.Imp.AlertService;
-import com.example.sell.service.Imp.RocketMQMessageService;
+import com.example.sell.enums.DeadLetterReason;
+import com.example.sell.entity.SeckillMessage;
+import com.example.sell.service.impl.AlertService;
+import com.example.sell.service.impl.RocketMQMessageService;
 import com.example.sell.utils.DistributedLockUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -576,7 +576,7 @@ public class SeckillMessageCompensationTask {
      */
     private boolean checkOrderExists(Long userId, Long seckillProductId) {
         try {
-            com.example.sell.domain.pojo.SeckillProduct seckillProduct = seckillProductMapper.selectById(seckillProductId);
+            com.example.sell.entity.SeckillProduct seckillProduct = seckillProductMapper.selectById(seckillProductId);
             if (seckillProduct == null) {
                 log.warn("【消息补偿】秒杀商品不存在，ID: {}", seckillProductId);
                 return false;

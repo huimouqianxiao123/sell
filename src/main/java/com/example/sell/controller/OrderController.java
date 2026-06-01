@@ -1,9 +1,9 @@
 package com.example.sell.controller;
 
 import com.example.sell.common.R;
-import com.example.sell.domain.Dto.OrderListRequest;
-import com.example.sell.domain.vo.OrderDetailVO;
-import com.example.sell.domain.vo.OrderVO;
+import com.example.sell.dto.OrderListRequest;
+import com.example.sell.vo.OrderDetailVO;
+import com.example.sell.vo.OrderVO;
 import com.example.sell.service.OrderService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;

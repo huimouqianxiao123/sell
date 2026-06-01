@@ -3,7 +3,7 @@ package com.example.sell.scheduler;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.example.sell.dao.SeckillProductMapper;
-import com.example.sell.domain.pojo.SeckillProduct;
+import com.example.sell.entity.SeckillProduct;
 import com.example.sell.service.SeckillProductService;
 import com.example.sell.utils.DistributedLockUtil;
 import jakarta.annotation.Resource;

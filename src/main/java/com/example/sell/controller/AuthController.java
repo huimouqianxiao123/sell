@@ -1,11 +1,11 @@
 package com.example.sell.controller;
 
 import com.example.sell.common.R;
-import com.example.sell.domain.Dto.LoginRequest;
-import com.example.sell.domain.Dto.RegisterRequest;
-import com.example.sell.domain.vo.LoginVo;
-import com.example.sell.domain.vo.UserVO;
-import com.example.sell.service.Imp.UserServiceImp;
+import com.example.sell.dto.LoginRequest;
+import com.example.sell.dto.RegisterRequest;
+import com.example.sell.vo.LoginVo;
+import com.example.sell.vo.UserVO;
+import com.example.sell.service.impl.UserServiceImp;
 import com.example.sell.service.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;

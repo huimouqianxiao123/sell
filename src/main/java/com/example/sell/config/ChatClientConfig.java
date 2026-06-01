@@ -3,6 +3,7 @@ package com.example.sell.config;
 import jakarta.annotation.Resource;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,4 +27,7 @@ public class ChatClientConfig {
     public ChatClient chatClient() {
         return ChatClient.builder(summaryModel).build();
     }
+
+
+
 }

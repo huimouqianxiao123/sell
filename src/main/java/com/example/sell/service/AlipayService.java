@@ -1,7 +1,7 @@
 package com.example.sell.service;
 
 import com.alipay.api.AlipayApiException;
-import com.example.sell.domain.Dto.RefundRequest;
+import com.example.sell.dto.RefundRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

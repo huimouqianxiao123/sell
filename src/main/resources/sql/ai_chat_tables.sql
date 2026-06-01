@@ -2,6 +2,7 @@
 CREATE TABLE IF NOT EXISTS ai_chat_message (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     session_id VARCHAR(64) NOT NULL COMMENT '会话ID',
+    user_id VARCHAR(64) NULL COMMENT '用户ID（用于检索强约束）',
     role VARCHAR(20) NOT NULL COMMENT '消息角色：user/assistant/system/tool',
     event_type VARCHAR(30) NOT NULL DEFAULT 'message' COMMENT '事件类型',
     content TEXT NULL COMMENT '消息文本',
@@ -9,6 +10,7 @@ CREATE TABLE IF NOT EXISTS ai_chat_message (
     create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_session_id (session_id),
+    INDEX idx_user_session_time (user_id, session_id, create_time),
     INDEX idx_session_time (session_id, create_time)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI聊天消息表';

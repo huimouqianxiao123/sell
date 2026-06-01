@@ -3,7 +3,7 @@ package com.example.sell.node;
 import com.alibaba.cloud.ai.graph.OverAllState;
 import com.alibaba.cloud.ai.graph.RunnableConfig;
 import com.alibaba.cloud.ai.graph.action.NodeActionWithConfig;
-import com.example.sell.service.Imp.AiChatMemoryService;
+import com.example.sell.service.impl.AiChatMemoryService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,11 +29,12 @@ public class MemoryNode implements NodeActionWithConfig {
     @Override
     public Map<String, Object> apply(OverAllState state, RunnableConfig config) throws Exception {
         String sessionId = state.value(StateKeys.SESSION_ID, String.class).orElse("");
+        String question = state.value(StateKeys.QUESTION, String.class).orElse("");
 
         log.info("[记忆加载] 开始加载, sessionId={}", sessionId);
 
         // 调用 AiChatMemoryService 加载上下文
-        String memoryContext = aiChatMemoryService.loadMemoryContext(sessionId);
+        String memoryContext = aiChatMemoryService.loadMemoryContext(sessionId, question);
 
         log.info("[记忆加载] 加载完成, sessionId={}, 上下文长度={}",
                 sessionId, memoryContext != null ? memoryContext.length() : 0);
